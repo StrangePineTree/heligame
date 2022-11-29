@@ -1,6 +1,7 @@
 import pygame
 from settings import *
 from support import *
+from pygame.math import Vector2
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, group):
@@ -17,46 +18,41 @@ class Player(pygame.sprite.Sprite):
         self.image.fill('green')
         self.rect = self.image.get_rect(center = pos)
 
-        self.direction = pygame.math.Vector2()
         self.pos = pygame.math.Vector2(self.rect.center)
-        self.speed = 300
+        self.speed: Vector2 = Vector2(0, 0)
         self.rotation = 0
 
     def input(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
-            self.direction.y = -1
+            self.speed.y += -THRUST
         elif keys[pygame.K_s]:
-            self.direction.y = 1
-        else:
-            self.direction.y = 0
+            self.speed.y += THRUST
         if keys[pygame.K_a]:
-            self.direction.x = -1
+            self.speed.x += -THRUST
             self.status = 'left'
             if self.rotation <= 20:
                 self.rotation += .1
         elif keys[pygame.K_d]:
-            self.direction.x = 1
+            self.speed.x += THRUST
             self.status = 'right'
             if self.rotation >= -20:
-                self.rotation -= .05
+                self.rotation -= .1
         else:
-            self.direction.x = 0
             if self.rotation != 0:
                 if self.rotation >0:
-                    self.rotation -= .025
+                    self.rotation -= .05
                 if self.rotation <0:
-                    self.rotation += .025            
+                    self.rotation += .05
+        self.speed *= 0.995
+        if self.speed.magnitude() > 0: 
+            self.speed.clamp_magnitude_ip(MAX_SPEED)
+
         
-    def move(self,dt):
-        if self.direction.magnitude() >0:
-            self.direction = self.direction.normalize()
-        self.pos.x += self.direction.x * self.speed * dt
-        self.rect.centerx = self.pos.x
-
-        self.pos.y += self.direction.y * self.speed * dt
-        self.rect.centery = self.pos.y
-
+    def move(self, dt):
+        print(self.speed)
+        self.pos += self.speed * dt
+        self.rect.center = self.pos
     def import_assests(self):
         self.animations = {'left':[], 'right':[]}
         for animation in self.animations.keys():
@@ -72,7 +68,7 @@ class Player(pygame.sprite.Sprite):
         center = self.image.get_rect().center
         self.image = pygame.transform.rotate(self.image, self.rotation)
         self.rect = self.image.get_rect()
-        self.rect.center = center
+        self.rect.center = self.pos
 
     def update(self, dt):
         self.input()
