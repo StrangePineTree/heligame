@@ -1,4 +1,6 @@
 import pygame
+#o,[prt]
+import math
 from settings import *
 from support import *
 from pygame.math import Vector2
@@ -21,38 +23,35 @@ class Player(pygame.sprite.Sprite):
         self.pos = pygame.math.Vector2(self.rect.center)
         self.speed: Vector2 = Vector2(0, 0)
         self.rotation = 0
+        self.thrust = 16
 
     def input(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
-            self.speed.y += -THRUST
+            if self.thrust < MAX_THRUST:
+                self.thrust += .01
         elif keys[pygame.K_s]:
-            self.speed.y += THRUST
+            if self.thrust > 0:
+                self.thrust -= .01
         if keys[pygame.K_a]:
-            self.speed.x += -THRUST
-            self.status = 'left'
-            if self.rotation <= 20:
-                self.rotation += .1
+            self.rotation += .25
         elif keys[pygame.K_d]:
-            self.speed.x += THRUST
-            self.status = 'right'
-            if self.rotation >= -20:
-                self.rotation -= .1
+            self.rotation -= .25
         else:
-            if self.rotation != 0:
-                if self.rotation >0:
-                    self.rotation -= .05
-                if self.rotation <0:
-                    self.rotation += .05
-        self.speed *= 0.995
-        if self.speed.magnitude() > 0: 
-            self.speed.clamp_magnitude_ip(MAX_SPEED)
+            pass
 
         
     def move(self, dt):
-        print(self.speed)
-        self.pos += self.speed * dt
-        self.rect.center = self.pos
+        self.speed.y -= math.cos(math.radians(self.rotation)) * SPEED_MULTIPLIER * self.thrust * dt
+        self.speed.x -= math.sin(math.radians(self.rotation)) * SPEED_MULTIPLIER * self.thrust * dt
+        self.pos += self.speed
+        self.speed *=0.99
+        self.speed.y+=dt * GRAVITY
+        print(self.thrust)
+
+    #gravity always pulls down at strenth of 30
+    #thrust is added to that
+    #if thrust is 0, gravity grows
     def import_assests(self):
         self.animations = {'left':[], 'right':[]}
         for animation in self.animations.keys():
@@ -64,6 +63,7 @@ class Player(pygame.sprite.Sprite):
         if self.frame_index >= len(self.animations[self.status]):
             self.frame_index = 0
         self.image = self.animations[self.status][int(self.frame_index)]
+        self.z = LAYERS['main']
 
         center = self.image.get_rect().center
         self.image = pygame.transform.rotate(self.image, self.rotation)
