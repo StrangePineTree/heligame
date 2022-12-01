@@ -15,6 +15,7 @@ class Player(pygame.sprite.Sprite):
         self.frame_index = 0
 
         self.image = self.animations[self.status]
+        self.z = LAYERS['main']
 
         self.image = pygame.Surface((32,64))
         self.image.fill('green')
@@ -25,14 +26,16 @@ class Player(pygame.sprite.Sprite):
         self.rotation = 0
         self.thrust = 16
 
+        self.scroll:Vector2 = Vector2(0,0)
+
     def input(self):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
             if self.thrust < MAX_THRUST:
-                self.thrust += .01
+                self.thrust += .025
         elif keys[pygame.K_s]:
             if self.thrust > 0:
-                self.thrust -= .01
+                self.thrust -= .025
         if keys[pygame.K_a]:
             self.rotation += .25
         elif keys[pygame.K_d]:
@@ -47,7 +50,9 @@ class Player(pygame.sprite.Sprite):
         self.pos += self.speed
         self.speed *=0.99
         self.speed.y+=dt * GRAVITY
-        print(self.thrust)
+
+        self.scroll -= self.speed
+        #print(self.thrust)
 
     #gravity always pulls down at strenth of 30
     #thrust is added to that

@@ -5,7 +5,7 @@ MAX_THRUST = 40 #default is 40
 GRAVITY = 4 #default is 4
 SPEED_MULTIPLIER = .25 #default is .25
 
-PARALLAX_FACTOR = 0.5
+PARALLAX_FACTOR = 10
 
 LAYERS = {
     'sky':1,
