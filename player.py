@@ -4,6 +4,7 @@ import math
 from settings import *
 from support import *
 from pygame.math import Vector2
+from weapons import *
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, group):
@@ -27,9 +28,14 @@ class Player(pygame.sprite.Sprite):
         self.thrust = 16
 
         self.scroll:Vector2 = Vector2(0,0)
+        self.scrollParralax:Vector2 = Vector2(0,0)
+
+        self.display_surface = pygame.display.get_surface()
 
     def input(self):
         keys = pygame.key.get_pressed()
+        if pygame.mouse.get_pressed()[1]:
+            atttacklist.append(Missile(self.pos.x,10,True,pygame.mouse.get_pos()))
         if keys[pygame.K_w]:
             if self.thrust < MAX_THRUST:
                 self.thrust += .025
@@ -52,6 +58,15 @@ class Player(pygame.sprite.Sprite):
         self.speed.y+=dt * GRAVITY
 
         self.scroll -= self.speed
+        self.scrollParralax -= self.speed / PARALLAX_FACTOR*.2
+
+        if self.speed.x > 0:
+            self.status = 'right'
+        if self.speed.x < 0:
+            self.status = 'left'
+
+        if self.pos.y <-50000:
+            self.speed.y += 10
         #print(self.thrust)
 
     #gravity always pulls down at strenth of 30
@@ -73,7 +88,17 @@ class Player(pygame.sprite.Sprite):
         center = self.image.get_rect().center
         self.image = pygame.transform.rotate(self.image, self.rotation)
         self.rect = self.image.get_rect()
-        self.rect.center = self.pos
+        self.rect.center = self.pos 
+
+    def displayGUI(self):
+        pygame.draw.rect(self.display_surface, (100,200,100),[SCREEN_WIDTH-60,SCREEN_HEIGHT-260,50,250])
+        pygame.draw.rect(self.display_surface, (100,200,100),[20,10,150,20])
+        pygame.draw.rect(self.display_surface, (100,200,100),[+20,SCREEN_HEIGHT-220,200,200])
+        self.updateGUI()
+        
+    def updateGUI(self):
+        pass
+    #will update GUI elements here
 
     def update(self, dt):
         self.input()

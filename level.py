@@ -1,8 +1,12 @@
 import pygame
+from generation import *
 from settings import *
-from sprites import Generic
+from sprites import GenericSprite
 from player import Player
 from player import *
+from generation import enemyList
+from enemies import *
+from weapons import *
 class Level:
     def __init__(self):
         self.display_surface = pygame.display.get_surface()
@@ -13,31 +17,46 @@ class Level:
 
 
     def setup(self):
-        Generic(
-            pos = (0,0),
-            surf = pygame.image.load("./graphics/background/background (sky).jpg").convert_alpha(),
+        for x in range (0,2):
+            enemyList.append(infantry(Vector2(random.randint(200,800),SCREEN_HEIGHT-118)))
+
+        GenericSprite(
+            pos = (SCREEN_WIDTH/2,SCREEN_HEIGHT+100),
+            surf = pygame.image.load("./graphics/background/background (sky).png").convert_alpha(),
             groups = self.all_sprites,
-            z = LAYERS['sky']
+            z = LAYERS['sky'],
+            point = ('midbottom')
         )
+        '''
         Generic(
             pos = (0,400),
             surf = pygame.image.load("./graphics/background/background (forrest).png").convert_alpha(),
             groups = self.all_sprites,
-            z = LAYERS['background']
+            z = LAYERS['background'],
+            point = ('topleft')
         )
-        Generic(
-            pos = (0,SCREEN_HEIGHT-100),
+        '''
+        GenericSprite(
+            pos = (SCREEN_WIDTH/2,SCREEN_HEIGHT-100),
             surf = pygame.image.load("./graphics/background/ground.png").convert_alpha(),
             groups = self.all_sprites,
-            z = LAYERS['ground']
+            z = LAYERS['ground'],
+            point = ('topleft')
         )
+
+        for x in range (0,1000):
+            GenerateObstacle(self) #type: ignore
 
         self.player = Player((640, 360), self.all_sprites)
 
+
+
     def run(self,dt):
-        self.display_surface.fill((97,62,86))
+        self.display_surface.fill((74, 65, 42))
         self.all_sprites.update(dt)
         self.all_sprites.custom_draw(self.player)
+        if OVERLAY == True:
+            self.player.displayGUI()
 
 
 class CameraGroup(pygame.sprite.Group):
@@ -53,23 +72,43 @@ class CameraGroup(pygame.sprite.Group):
         for layer in LAYERS.values():
             for sprite in self.sprites():
                 if sprite.z == layer:
-                    if layer <= 2:
+                    if layer == 2:
                         offset_rect = sprite.rect.copy()
                         offset_rect.center -= self.offset / PARALLAX_FACTOR * (.1 if layer == 1 else .8)
                         self.display_surface.blit(sprite.image, offset_rect)
                     elif layer == 3:
-                        self.tiles = math.ceil(SCREEN_WIDTH / sprite.image.get_width()) + 1
-                        self.i = 0
+                        tiles = math.ceil(SCREEN_WIDTH / sprite.image.get_width()) + 2
                         offset_rect = sprite.rect.copy()
                         offset_rect.center -= self.offset
-                        while(self.i < self.tiles):
-                            $sprite.image.get_rect(center=(0,SCREEN_HEIGHT-100))
-                            self.display_surface.blit(sprite.image, (sprite.image.get_width()*self.i + player.scroll.x, SCREEN_HEIGHT-100-self.offset.y))  
-                            self.i += 1
+                        for i in range(tiles):
+                            #sprite.image.get_rect(center=(0,SCREEN_HEIGHT-100))
+                            drawRect = sprite.rect.copy()
+                            drawRect.center = (sprite.image.get_width()*(i - 1) + player.scroll.x, SCREEN_HEIGHT-100-self.offset.y)
+                            self.display_surface.blit(sprite.image, (sprite.image.get_width()*(i - 1) + player.scroll.x, SCREEN_HEIGHT-100-self.offset.y))  
+                            i += 1
                         if abs(player.scroll.x) > (sprite.image.get_width()):
                             player.scroll.x = 0
-                        print(player.scroll.x)
+
+                        #pygame.draw.rect(self.display_surface, (100,200,100),[250-self.offset.x,SCREEN_HEIGHT-250-self.offset.y,50,25])
+
+                    elif layer == 1:
+                        tiles = math.ceil(SCREEN_WIDTH / sprite.image.get_width()) + 2
+                        offset_rect = sprite.rect.copy()
+                        offset_rect.midbottom -= self.offset / PARALLAX_FACTOR * .1
+                        for i in range(tiles):
+                            #sprite.image.get_rect(center=(0,SCREEN_HEIGHT-100))
+                            drawRect = sprite.rect.copy()
+                            drawRect.midbottom = (sprite.image.get_width()*(i - 1) + player.scrollParralax.x, SCREEN_HEIGHT-100-self.offset.y/PARALLAX_FACTOR*.2)
+                            self.display_surface.blit(sprite.image, (sprite.image.get_width()*(i - 1) + player.scrollParralax.x, SCREEN_HEIGHT-1800-self.offset.y/PARALLAX_FACTOR*.2))  
+                            i += 1
+                        if abs(player.scrollParralax.x) > (sprite.image.get_width()):
+                            player.scrollParralax.x = 0
+
                     else:
                         offset_rect = sprite.rect.copy()
-                        offset_rect.center -= self.offset
+                        offset_rect.midbottom -= self.offset
                         self.display_surface.blit(sprite.image, offset_rect)
+                        for e in enemyList:
+                            self.display_surface.blit(e.sprite,e.pos-self.offset)   # type: ignore
+                        for a in atttacklist:
+                            self.display_surface.blit(a.sprite,a.pos-self.offset)
