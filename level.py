@@ -109,6 +109,12 @@ class CameraGroup(pygame.sprite.Group):
                         offset_rect.midbottom -= self.offset
                         self.display_surface.blit(sprite.image, offset_rect)
                         for e in enemyList:
-                            self.display_surface.blit(e.sprite,e.pos-self.offset)   # type: ignore
-                        for a in atttacklist:
-                            self.display_surface.blit(a.sprite,a.pos-self.offset)
+                            self.display_surface.blit(e.sprite, e.pos-self.offset)
+                        for a in attacklist:
+                            if a.rotated == False:
+                                self.image = pygame.transform.rotate(a.sprite, a.angle-180)
+                                self.rect = self.image.get_rect()
+                                self.rect.center = a.pos 
+                                a.rotated = True
+                            self.display_surface.blit(self.image, a.pos-self.offset)
+

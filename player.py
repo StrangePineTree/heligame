@@ -5,6 +5,7 @@ from settings import *
 from support import *
 from pygame.math import Vector2
 from weapons import *
+from level import *
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, group):
@@ -26,6 +27,7 @@ class Player(pygame.sprite.Sprite):
         self.speed: Vector2 = Vector2(0, 0)
         self.rotation = 0
         self.thrust = 16
+        self.missileCD = 0
 
         self.scroll:Vector2 = Vector2(0,0)
         self.scrollParralax:Vector2 = Vector2(0,0)
@@ -34,8 +36,12 @@ class Player(pygame.sprite.Sprite):
 
     def input(self):
         keys = pygame.key.get_pressed()
-        if pygame.mouse.get_pressed()[1]:
-            atttacklist.append(Missile(self.pos.x,10,True,pygame.mouse.get_pos()))
+
+        offset:Vector2 = Vector2(self.pos.x - SCREEN_WIDTH / 2,self.pos.y - SCREEN_HEIGHT / 2)
+        if pygame.mouse.get_pressed()[0]:
+            if self.missileCD <= 0:
+                attacklist.append(Missile(self.pos,(5 * MISSILE_SPEAD),True,pygame.mouse.get_pos()+offset))
+                self.missileCD = MISSILE_COOLDOWN
         if keys[pygame.K_w]:
             if self.thrust < MAX_THRUST:
                 self.thrust += .025
@@ -43,19 +49,19 @@ class Player(pygame.sprite.Sprite):
             if self.thrust > 0:
                 self.thrust -= .025
         if keys[pygame.K_a]:
-            self.rotation += .25
+            self.rotation += .25 * TURN_SPEED
         elif keys[pygame.K_d]:
-            self.rotation -= .25
+            self.rotation -= .25 * TURN_SPEED
         else:
             pass
 
         
     def move(self, dt):
-        self.speed.y -= math.cos(math.radians(self.rotation)) * SPEED_MULTIPLIER * self.thrust * dt
-        self.speed.x -= math.sin(math.radians(self.rotation)) * SPEED_MULTIPLIER * self.thrust * dt
+        self.speed.y -= math.cos(math.radians(self.rotation)) * SPEED_MULTIPLIER * self.thrust * dt / 4
+        self.speed.x -= math.sin(math.radians(self.rotation)) * SPEED_MULTIPLIER * self.thrust * dt / 4
         self.pos += self.speed
         self.speed *=0.99
-        self.speed.y+=dt * GRAVITY
+        self.speed.y+=dt * 4 * GRAVITY
 
         self.scroll -= self.speed
         self.scrollParralax -= self.speed / PARALLAX_FACTOR*.2
@@ -67,7 +73,9 @@ class Player(pygame.sprite.Sprite):
 
         if self.pos.y <-50000:
             self.speed.y += 10
-        #print(self.thrust)
+
+        self.missileCD -= 1
+
 
     #gravity always pulls down at strenth of 30
     #thrust is added to that
