@@ -40,7 +40,7 @@ class Player(pygame.sprite.Sprite):
         offset:Vector2 = Vector2(self.pos.x - SCREEN_WIDTH / 2,self.pos.y - SCREEN_HEIGHT / 2)
         if pygame.mouse.get_pressed()[0]:
             if self.missileCD <= 0:
-                attacklist.append(Missile(self.pos,(5 * MISSILE_SPEAD),True,pygame.mouse.get_pos()+offset))
+                attacklist.append(Missile(self.pos,(10 * MISSILE_SPEED),True,pygame.mouse.get_pos()+offset))
                 self.missileCD = MISSILE_COOLDOWN
         if keys[pygame.K_w]:
             if self.thrust < MAX_THRUST:
@@ -49,9 +49,9 @@ class Player(pygame.sprite.Sprite):
             if self.thrust > 0:
                 self.thrust -= .025
         if keys[pygame.K_a]:
-            self.rotation += .25 * TURN_SPEED
+            self.rotation += .25 * (3*TURN_SPEED)
         elif keys[pygame.K_d]:
-            self.rotation -= .25 * TURN_SPEED
+            self.rotation -= .25 * (3*TURN_SPEED)
         else:
             pass
 

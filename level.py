@@ -104,7 +104,7 @@ class CameraGroup(pygame.sprite.Group):
                         if abs(player.scrollParralax.x) > (sprite.image.get_width()):
                             player.scrollParralax.x = 0
 
-                    else:
+                    elif layer != 8:
                         offset_rect = sprite.rect.copy()
                         offset_rect.midbottom -= self.offset
                         self.display_surface.blit(sprite.image, offset_rect)
