@@ -2,6 +2,8 @@ import pygame
 from sprites import *
 from settings import *
 from sprites import GenericSprite
+from player import Player
+from level import *
 
 class button:
 	box: pygame.Rect
@@ -27,10 +29,10 @@ class Menu:
         self.menuImage = pygame.transform.scale(self.menuImage, (SCREEN_WIDTH,SCREEN_HEIGHT)).convert_alpha()
 
     def run(self):
-        for button in self.buttonList:
-            button.draw()
         self.display_surface.fill((175, 65, 142))
         self.display_surface.blit(self.menuImage,(0,0))
+#        for button in self.buttonList:
+#            button.draw()
         if pygame.mouse.get_pressed()[0]:
             for button in self.buttonList:
                 if button.box.collidepoint(pygame.mouse.get_pos()):

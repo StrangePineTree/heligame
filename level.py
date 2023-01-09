@@ -27,15 +27,6 @@ class Level:
             z = LAYERS['sky'],
             point = ('midbottom')
         )
-        '''
-        Generic(
-            pos = (0,400),
-            surf = pygame.image.load("./graphics/background/background (forrest).png").convert_alpha(),
-            groups = self.all_sprites,
-            z = LAYERS['background'],
-            point = ('topleft')
-        )
-        '''
         GenericSprite(
             pos = (SCREEN_WIDTH/2,SCREEN_HEIGHT-100),
             surf = pygame.image.load("./graphics/background/ground.png").convert_alpha(),
@@ -45,7 +36,7 @@ class Level:
         )
 
         for x in range (0,1000):
-            GenerateObstacle(self) #type: ignore
+            GenerateObstacle(self)
 
         self.player = Player((640, 360), self.all_sprites)
 

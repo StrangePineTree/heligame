@@ -34,6 +34,8 @@ class Player(pygame.sprite.Sprite):
 
         self.display_surface = pygame.display.get_surface()
 
+        self.helitype = 'basic'
+
     def input(self):
         keys = pygame.key.get_pressed()
 
@@ -59,18 +61,23 @@ class Player(pygame.sprite.Sprite):
     def move(self, dt):
         self.speed.y -= math.cos(math.radians(self.rotation)) * SPEED_MULTIPLIER * self.thrust * dt / 4
         self.speed.x -= math.sin(math.radians(self.rotation)) * SPEED_MULTIPLIER * self.thrust * dt / 4
-        self.pos += self.speed
         self.speed *=0.99
         self.speed.y+=dt * 4 * GRAVITY
-
-        self.scroll -= self.speed
         self.scrollParralax -= self.speed / PARALLAX_FACTOR*.2
-
+        #collision (very basic and only for the ground, i should improve it)
+        if (self.scroll.y + (self.speed.y*3) < -235):
+            self.speed.x /= 1.075
+            if self.speed.y > 0:
+                self.speed.y = 0
+            if self.speed.x < 5:
+                self.speed.x = 0
+        self.pos += self.speed
+        self.scroll -= self.speed
         if self.speed.x > 0:
             self.status = 'right'
         if self.speed.x < 0:
             self.status = 'left'
-
+        print(self.speed.x)
         if self.pos.y <-50000:
             self.speed.y += 10
 
