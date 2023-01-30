@@ -26,7 +26,7 @@ class Player(pygame.sprite.Sprite):
         self.pos = pygame.math.Vector2(self.rect.center)
         self.speed: Vector2 = Vector2(0, 0)
         self.rotation = 0
-        self.thrust = 16
+        self.thrust = 0
         self.missileCD = 0
 
         self.scroll:Vector2 = Vector2(0,0)
@@ -46,10 +46,10 @@ class Player(pygame.sprite.Sprite):
                 self.missileCD = MISSILE_COOLDOWN
         if keys[pygame.K_w]:
             if self.thrust < MAX_THRUST:
-                self.thrust += .025
+                self.thrust += .05
         elif keys[pygame.K_s]:
             if self.thrust > 0:
-                self.thrust -= .025
+                self.thrust -= .05
         if keys[pygame.K_a]:
             self.rotation += .25 * (3*TURN_SPEED)
         elif keys[pygame.K_d]:
@@ -62,22 +62,23 @@ class Player(pygame.sprite.Sprite):
         self.speed.y -= math.cos(math.radians(self.rotation)) * SPEED_MULTIPLIER * self.thrust * dt / 4
         self.speed.x -= math.sin(math.radians(self.rotation)) * SPEED_MULTIPLIER * self.thrust * dt / 4
         self.speed *=0.99
-        self.speed.y+=dt * 4 * GRAVITY
+        self.speed.y+=dt * GRAVITY
         self.scrollParralax -= self.speed / PARALLAX_FACTOR*.2
         #collision (very basic and only for the ground, i should improve it)
-        if (self.scroll.y + (self.speed.y*3) < -235):
+        if (self.scroll.y + (self.speed.y*3) < -237):
             self.speed.x /= 1.075
             if self.speed.y > 0:
                 self.speed.y = 0
             if self.speed.x < 5:
                 self.speed.x = 0
+            if (abs(self.rotation) > 15):
+                print('you died! (this doesnt do anything. . .yet)')
         self.pos += self.speed
         self.scroll -= self.speed
         if self.speed.x > 0:
             self.status = 'right'
         if self.speed.x < 0:
             self.status = 'left'
-        print(self.speed.x)
         if self.pos.y <-50000:
             self.speed.y += 10
 
@@ -106,15 +107,19 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = self.pos 
 
     def displayGUI(self):
-        pygame.draw.rect(self.display_surface, (100,200,100),[SCREEN_WIDTH-60,SCREEN_HEIGHT-260,50,250])
-        pygame.draw.rect(self.display_surface, (100,200,100),[20,10,150,20])
-        pygame.draw.rect(self.display_surface, (100,200,100),[+20,SCREEN_HEIGHT-220,200,200])
-        self.updateGUI()
-        
-    def updateGUI(self):
-        pass
-    #will update GUI elements here
-
+        pygame.draw.rect(self.display_surface, (00,200,200),[SCREEN_WIDTH-60,SCREEN_HEIGHT-260,50,250])#throttle
+        self.handle = pygame.image.load("./graphics/GUI/throttle handle.png").convert_alpha()
+        self.needle = pygame.image.load("./graphics/GUI/speedometer needle.png").convert_alpha()
+        self.numbers = pygame.image.load("./graphics/GUI/speedometer.png").convert_alpha() #ToDo: draw these
+        self.speedometer = pygame.image.load("./graphics/GUI/speedometer numbers.png").convert_alpha()
+        self.needle = pygame.transform.rotate(self.needle,110-((abs(self.speed.x)*10+abs(self.speed.y)*10)))#IMPORTANT: this code rotates around center (1/3)
+        self.needleRect = self.needle.get_rect(center = self.needle.get_rect(center = (120,SCREEN_HEIGHT-140)).center)#IMPORTANT: this code rotates around center (2/3)
+        pygame.draw.rect(self.display_surface, (100,100,200),[20,10,150,20])
+        pygame.draw.rect(self.display_surface, (100,200,100),[+20,SCREEN_HEIGHT-220,200,200]) #speedometer
+        #update GUI elements here
+        self.handleStartPos = SCREEN_HEIGHT/1.04 - (self.thrust * 16.7)
+        self.display_surface.blit(self.handle,(SCREEN_WIDTH-60,self.handleStartPos))
+        self.display_surface.blit(self.needle,(self.needleRect))#todo: remove magic numbers #IMPORTANT: this code rotates around center (3/3)
     def update(self, dt):
         self.input()
         self.move(dt)

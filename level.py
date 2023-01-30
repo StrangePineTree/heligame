@@ -1,4 +1,5 @@
 import pygame
+import random
 from generation import *
 from settings import *
 from sprites import GenericSprite
@@ -15,10 +16,16 @@ class Level:
 
         self.setup()
 
+        self.player = Player((640, 360), self.all_sprites)
 
+        self.groundPos = self.player.pos.x-200
+
+#TODO: completly redo collisoon, its fucked and cant be fixxed
     def setup(self):
         for x in range (0,2):
             enemyList.append(infantry(Vector2(random.randint(200,800),SCREEN_HEIGHT-118)))
+
+        self.player = Player((640, 360), self.all_sprites)
 
         GenericSprite(
             pos = (SCREEN_WIDTH/2,SCREEN_HEIGHT+100),
@@ -28,7 +35,7 @@ class Level:
             point = ('midbottom')
         )
         GenericSprite(
-            pos = (SCREEN_WIDTH/2,SCREEN_HEIGHT-100),
+            pos = (SCREEN_WIDTH/2, SCREEN_HEIGHT+100),
             surf = pygame.image.load("./graphics/background/ground.png").convert_alpha(),
             groups = self.all_sprites,
             z = LAYERS['ground'],
@@ -37,10 +44,6 @@ class Level:
 
         for x in range (0,1000):
             GenerateObstacle(self)
-
-        self.player = Player((640, 360), self.all_sprites)
-
-
 
     def run(self,dt):
         self.display_surface.fill((74, 65, 42))
@@ -74,7 +77,7 @@ class CameraGroup(pygame.sprite.Group):
                         for i in range(tiles):
                             #sprite.image.get_rect(center=(0,SCREEN_HEIGHT-100))
                             drawRect = sprite.rect.copy()
-                            drawRect.center = (sprite.image.get_width()*(i - 1) + player.scroll.x, SCREEN_HEIGHT-100-self.offset.y)
+                            drawRect.center = (sprite.image.get_width()*(i - 1) + player.scroll.x, SCREEN_HEIGHT-11-self.offset.y)
                             self.display_surface.blit(sprite.image, (sprite.image.get_width()*(i - 1) + player.scroll.x, SCREEN_HEIGHT-100-self.offset.y))  
                             i += 1
                         if abs(player.scroll.x) > (sprite.image.get_width()):
