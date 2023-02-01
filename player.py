@@ -92,7 +92,7 @@ class Player(pygame.sprite.Sprite):
         self.animations = {'left':[], 'right':[]}
         for animation in self.animations.keys():
             full_path = './graphics/heli/' + animation
-            self.animations[animation]=import_folder(full_path)
+            self.animations[animation]=(((import_folder((((full_path)))))))
     
     def animate(self,dt):
         self.frame_index += 4*dt
@@ -110,16 +110,18 @@ class Player(pygame.sprite.Sprite):
         pygame.draw.rect(self.display_surface, (00,200,200),[SCREEN_WIDTH-60,SCREEN_HEIGHT-260,50,250])#throttle
         self.handle = pygame.image.load("./graphics/GUI/throttle handle.png").convert_alpha()
         self.needle = pygame.image.load("./graphics/GUI/speedometer needle.png").convert_alpha()
-        self.numbers = pygame.image.load("./graphics/GUI/speedometer.png").convert_alpha() #ToDo: draw these
-        self.speedometer = pygame.image.load("./graphics/GUI/speedometer numbers.png").convert_alpha()
-        self.needle = pygame.transform.rotate(self.needle,110-((abs(self.speed.x)*10+abs(self.speed.y)*10)))#IMPORTANT: this code rotates around center (1/3)
-        self.needleRect = self.needle.get_rect(center = self.needle.get_rect(center = (120,SCREEN_HEIGHT-140)).center)#IMPORTANT: this code rotates around center (2/3)
+        self.numbers = pygame.image.load("./graphics/GUI/speedometer numbers.png").convert_alpha() #ToDo: draw these
+        self.speedometer = pygame.image.load("./graphics/GUI/speedometer.png").convert_alpha()
+        self.needle = pygame.transform.rotate(self.needle, 115-(self.speed.length() * 9))#IMPORTANT: this code rotates around center (1/3)
+        self.needleRect = self.needle.get_rect(center = self.needle.get_rect(center = (120,SCREEN_HEIGHT-120)).center)#IMPORTANT: this code rotates around center (2/3)
         pygame.draw.rect(self.display_surface, (100,100,200),[20,10,150,20])
-        pygame.draw.rect(self.display_surface, (100,200,100),[+20,SCREEN_HEIGHT-220,200,200]) #speedometer
         #update GUI elements here
-        self.handleStartPos = SCREEN_HEIGHT/1.04 - (self.thrust * 16.7)
+        self.handleStartPos = SCREEN_HEIGHT/1.04 - (self.thrust * 15.5)
         self.display_surface.blit(self.handle,(SCREEN_WIDTH-60,self.handleStartPos))
+        self.display_surface.blit(self.speedometer,(+20,SCREEN_HEIGHT-220))
         self.display_surface.blit(self.needle,(self.needleRect))#todo: remove magic numbers #IMPORTANT: this code rotates around center (3/3)
+        self.display_surface.blit(self.numbers,(20,SCREEN_HEIGHT-220))
+        #speedometer numbers
     def update(self, dt):
         self.input()
         self.move(dt)
