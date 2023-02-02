@@ -22,7 +22,7 @@ class Level:
 
 #TODO: completly redo collisoon, its fucked and cant be fixxed
     def setup(self):
-        for x in range (0,2):
+        for x in range (0,1):
             enemyList.append(infantry(Vector2(random.randint(200,800),SCREEN_HEIGHT-118)))
 
         self.player = Player((640, 360), self.all_sprites)

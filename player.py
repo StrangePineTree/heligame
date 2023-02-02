@@ -65,6 +65,7 @@ class Player(pygame.sprite.Sprite):
         self.speed.y+=dt * GRAVITY
         self.scrollParralax -= self.speed / PARALLAX_FACTOR*.2
         #collision (very basic and only for the ground, i should improve it)
+        '''
         if (self.scroll.y + (self.speed.y*3) < -237):
             self.speed.x /= 1.075
             if self.speed.y > 0:
@@ -73,6 +74,7 @@ class Player(pygame.sprite.Sprite):
                 self.speed.x = 0
             if (abs(self.rotation) > 15):
                 print('you died! (this doesnt do anything. . .yet)')
+                '''
         self.pos += self.speed
         self.scroll -= self.speed
         if self.speed.x > 0:
@@ -83,6 +85,21 @@ class Player(pygame.sprite.Sprite):
             self.speed.y += 10
 
         self.missileCD -= 1
+
+    def collide(self):
+        ground = pygame.rect.Rect(0,SCREEN_HEIGHT-100-self.scroll.y,SCREEN_WIDTH,150)
+
+        if self.rect.colliderect(ground):
+            if self.speed.y > 0:
+                self.rect.bottom = ground.top
+                print('aaa')
+            if self.speed.y < 0:
+                self.rect.top = ground.bottom
+            if self.speed.x > 0:
+                self.rect.right = ground.left
+            if self.speed.x < 0:
+                self.rect.left = ground.right
+#collide the player here
 
 
     #gravity always pulls down at strenth of 30
@@ -121,7 +138,6 @@ class Player(pygame.sprite.Sprite):
         self.display_surface.blit(self.speedometer,(+20,SCREEN_HEIGHT-220))
         self.display_surface.blit(self.needle,(self.needleRect))#todo: remove magic numbers #IMPORTANT: this code rotates around center (3/3)
         self.display_surface.blit(self.numbers,(20,SCREEN_HEIGHT-220))
-        #speedometer numbers
     def update(self, dt):
         self.input()
         self.move(dt)

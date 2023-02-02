@@ -13,7 +13,7 @@ class Game:
         self.screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
         self.clock = pygame.time.Clock()
         self.level = Level()
-        self.state = 'menu'
+        self.state = 'running'
         self.setup = Menu()
 
     def run(self):
@@ -26,11 +26,12 @@ class Game:
             self.level.run(dt)
             pygame.display.update()
             for enemy in enemyList:
-                enemy.update()
+                enemy.update(self.level.player.pos)
             for attack in attacklist:
                 attack.update()
                 if attack.delete == True:
                     attacklist.remove(attack)
+            self.level.player.collide()
 
     def menu(self):
         while True:

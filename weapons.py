@@ -12,6 +12,8 @@ class Weapon:
         self.playerMissile = playerMissile
         self.target = target
         self.delete = False
+        self.rotated = False
+
 
     def update(self):
         pass
@@ -21,11 +23,11 @@ class Missile(Weapon):
         super().__init__(sourcePos,speed,playerMissile,target,pygame.image.load("./graphics/weapons/missile.png").convert_alpha())
         self.vel = (self.target - self.sourcePos).normalize()
         self.angle = (self.target - self.sourcePos).angle_to((1, 0))
-        self.rotated = False
+        self.hitbox =  pygame.image.load("./graphics/weapons/missile.png").get_rect
 
     def update(self):
-        if (self.target - self.pos).length() <= 20:
-            self.delete = True
         self.pos += self.vel * self.speed 
+    def kill(self):
+        self.delete = True
 
 attacklist: list[Weapon] = []
