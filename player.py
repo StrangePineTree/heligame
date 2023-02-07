@@ -22,6 +22,7 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.Surface((32,64))
         self.image.fill('green')
         self.rect = self.image.get_rect(center = pos)
+        self.hitbox = pygame.rect.Rect(SCREEN_WIDTH/2-64,SCREEN_HEIGHT/2-30,128,60)
 
         self.pos = pygame.math.Vector2(self.rect.center)
         self.speed: Vector2 = Vector2(0, 0)
@@ -64,20 +65,10 @@ class Player(pygame.sprite.Sprite):
         self.speed *=0.99
         self.speed.y+=dt * GRAVITY
         self.scrollParralax -= self.speed / PARALLAX_FACTOR*.2
-        #collision (very basic and only for the ground, i should improve it)
-        '''
-        if (self.scroll.y + (self.speed.y*3) < -237):
-            self.speed.x /= 1.075
-            if self.speed.y > 0:
-                self.speed.y = 0
-            if self.speed.x < 5:
-                self.speed.x = 0
-            if (abs(self.rotation) > 15):
-                print('you died! (this doesnt do anything. . .yet)')
-                '''
+
         self.pos += self.speed
         self.scroll -= self.speed
-        if self.speed.x > 0:
+        if self.speed.x > 0: #todo: change this to use self.rotation
             self.status = 'right'
         if self.speed.x < 0:
             self.status = 'left'
@@ -85,28 +76,22 @@ class Player(pygame.sprite.Sprite):
             self.speed.y += 10
 
         self.missileCD -= 1
+        self.collide(self.scroll)
 
-    def collide(self):
-        ground = pygame.rect.Rect(0,SCREEN_HEIGHT-100-self.scroll.y,SCREEN_WIDTH,150)
+    def yeet(self,speed:int,direction):#for when you gotta get sent
+        if direction == 'up':
+            self.speed.y -= speed
 
-        if self.rect.colliderect(ground):
-            if self.speed.y > 0:
-                self.rect.bottom = ground.top
-                print('aaa')
-            if self.speed.y < 0:
-                self.rect.top = ground.bottom
-            if self.speed.x > 0:
-                self.rect.right = ground.left
-            if self.speed.x < 0:
-                self.rect.left = ground.right
-#collide the player here
+    def collide(self,scroll):
+        #rotate self.hitbox
+        #use self.hitbox for missiles, attacks, ect
 
+        if self.pos.y > SCREEN_HEIGHT-100:
+            self.yeet(random.randrange(10,15),'up')
+            #do heavy damage to the player based on speed here
 
-    #gravity always pulls down at strenth of 30
-    #thrust is added to that
-    #if thrust is 0, gravity grows
     def import_assests(self):
-        self.animations = {'left':[], 'right':[]}
+        self.animations: dict[str, list[pygame.Surface]] = {'left':[], 'right':[]}
         for animation in self.animations.keys():
             full_path = './graphics/heli/' + animation
             self.animations[animation]=(((import_folder((((full_path)))))))
@@ -121,7 +106,7 @@ class Player(pygame.sprite.Sprite):
         center = self.image.get_rect().center
         self.image = pygame.transform.rotate(self.image, self.rotation)
         self.rect = self.image.get_rect()
-        self.rect.center = self.pos 
+        self.rect.center = self.pos
 
     def displayGUI(self):
         pygame.draw.rect(self.display_surface, (00,200,200),[SCREEN_WIDTH-60,SCREEN_HEIGHT-260,50,250])#throttle

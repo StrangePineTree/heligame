@@ -31,7 +31,6 @@ class Game:
                 attack.update()
                 if attack.delete == True:
                     attacklist.remove(attack)
-            self.level.player.collide()
 
     def menu(self):
         while True:

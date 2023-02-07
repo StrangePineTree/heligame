@@ -16,8 +16,6 @@ class Level:
 
         self.setup()
 
-        self.player = Player((640, 360), self.all_sprites)
-
         self.groundPos = self.player.pos.x-200
 
 #TODO: completly redo collisoon, its fucked and cant be fixxed
@@ -111,4 +109,3 @@ class CameraGroup(pygame.sprite.Group):
                                 self.rect.center = a.pos 
                                 a.rotated = True
                             self.display_surface.blit(self.image, a.pos-self.offset)
-
