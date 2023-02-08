@@ -29,19 +29,21 @@ class Player(pygame.sprite.Sprite):
         self.rotation = 0
         self.thrust = 0
         self.missileCD = 0
+        self.hp = 1000
 
         self.scroll:Vector2 = Vector2(0,0)
         self.scrollParralax:Vector2 = Vector2(0,0)
 
         self.display_surface = pygame.display.get_surface()
 
-        self.helitype = 'basic'
+        self.helitype = HELITYPE
+        self.ඞ = "sus"
 
     def input(self):
         keys = pygame.key.get_pressed()
 
         offset:Vector2 = Vector2(self.pos.x - SCREEN_WIDTH / 2,self.pos.y - SCREEN_HEIGHT / 2)
-        if pygame.mouse.get_pressed()[0]:
+        if pygame.mouse.get_pressed()[0] and self.helitype == 'basic':
             if self.missileCD <= 0:
                 attacklist.append(Missile(self.pos,(10 * MISSILE_SPEED),True,pygame.mouse.get_pos()+offset))
                 self.missileCD = MISSILE_COOLDOWN
@@ -78,17 +80,24 @@ class Player(pygame.sprite.Sprite):
         self.missileCD -= 1
         self.collide(self.scroll)
 
-    def yeet(self,speed:int,direction):#for when you gotta get sent
-        if direction == 'up':
-            self.speed.y -= speed
+    def crash(self,speed:Vector2, rotation):
+        self.speed.x /= 2
+    #maybe make this completly scripted, basicly put the player in a cut scene
+
 
     def collide(self,scroll):
         #rotate self.hitbox
         #use self.hitbox for missiles, attacks, ect
+        for attack in attacklist:
+            if self.hitbox.colliderect(attack.hitbox):
+                self.hp -= attack.damage
+                attacklist.remove(attack)
+                print('hit')
 
         if self.pos.y > SCREEN_HEIGHT-100:
-            self.yeet(random.randrange(10,15),'up')
+            self.crash(self.speed, self.rotation)
             #do heavy damage to the player based on speed here
+            #make a better 'crash', make player spin and flip around before dying (they should have flown better)
 
     def import_assests(self):
         self.animations: dict[str, list[pygame.Surface]] = {'left':[], 'right':[]}

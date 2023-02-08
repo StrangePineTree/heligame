@@ -29,6 +29,8 @@ class Game:
                 enemy.update(self.level.player.pos)
             for attack in attacklist:
                 attack.update()
+                if attack.playerMissile == False and attack.lifetime >100:
+                    attack.delete = True
                 if attack.delete == True:
                     attacklist.remove(attack)
 
@@ -45,7 +47,7 @@ class Game:
                 startup(self)
 
             pygame.display.update()
-(((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((())))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
 def startup(game: Game | None = None):
     if game == None:
         game = Game()

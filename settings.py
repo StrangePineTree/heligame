@@ -11,6 +11,13 @@ RUNTIME = False
 MISSILE_COOLDOWN = 75
 MISSILE_SPEED = 1
 
+HELITYPE = "basic"
+#future heli types: UFO, attack, scout/basic, transport
+#UFO will fly just by using arrow keys, no gravity or rotation
+#attack will have lock on missiles and machine guns
+#transport will have machine gun that can aim in any direction
+#basic will be lame probebly
+
 PARALLAX_FACTOR = 10
 
 LAYERS = {
