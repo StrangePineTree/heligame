@@ -8,10 +8,10 @@ GAME_SPEED_MODIFIER = 1
 TURN_SPEED = 1.0
 OVERLAY = True
 RUNTIME = False
-MISSILE_COOLDOWN = 75
-MISSILE_SPEED = 1
+ATTACK_COOLDOWN = 1.0
+ATTACK_SPEED = 1
 
-HELITYPE = "basic"
+HELITYPE = "transport"
 #future heli types: UFO, attack, scout/basic, transport
 #UFO will fly just by using arrow keys, no gravity or rotation
 #attack will have lock on missiles and machine guns

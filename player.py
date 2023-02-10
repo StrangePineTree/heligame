@@ -43,10 +43,17 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
 
         offset:Vector2 = Vector2(self.pos.x - SCREEN_WIDTH / 2,self.pos.y - SCREEN_HEIGHT / 2)
+
+        if pygame.mouse.get_pressed()[0] and self.helitype == 'transport':
+            if self.missileCD <= 0:
+                attacklist.append(Bullet(self.pos,(75 * ATTACK_SPEED),True,pygame.mouse.get_pos()+offset))
+                self.missileCD = ATTACK_COOLDOWN * 10
+
         if pygame.mouse.get_pressed()[0] and self.helitype == 'basic':
             if self.missileCD <= 0:
-                attacklist.append(Missile(self.pos,(10 * MISSILE_SPEED),True,pygame.mouse.get_pos()+offset))
-                self.missileCD = MISSILE_COOLDOWN
+                attacklist.append(Missile(self.pos,(10 * ATTACK_SPEED),True,pygame.mouse.get_pos()+offset))
+                self.missileCD = ATTACK_COOLDOWN * 75
+
         if keys[pygame.K_w]:
             if self.thrust < MAX_THRUST:
                 self.thrust += .05
@@ -67,8 +74,10 @@ class Player(pygame.sprite.Sprite):
         self.speed *=0.99
         self.speed.y+=dt * GRAVITY
         self.scrollParralax -= self.speed / PARALLAX_FACTOR*.2
-
-        self.pos += self.speed
+        if self.pos.y > SCREEN_HEIGHT-100 and self.speed.y > 0:
+            pass
+        else:
+            self.pos += self.speed
         self.scroll -= self.speed
         if self.speed.x > 0: #todo: change this to use self.rotation
             self.status = 'right'
@@ -78,10 +87,11 @@ class Player(pygame.sprite.Sprite):
             self.speed.y += 10
 
         self.missileCD -= 1
-        self.collide(self.scroll)
 
     def crash(self,speed:Vector2, rotation):
-        self.speed.x /= 2
+        self.speed.x /= 1.1
+        self.speed.y *= .7
+        self.speed.y = -abs(self.speed.y)
     #maybe make this completly scripted, basicly put the player in a cut scene
 
 
@@ -134,5 +144,6 @@ class Player(pygame.sprite.Sprite):
         self.display_surface.blit(self.numbers,(20,SCREEN_HEIGHT-220))
     def update(self, dt):
         self.input()
+        self.collide(self.scroll)
         self.move(dt)
         self.animate(dt)

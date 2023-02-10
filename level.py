@@ -21,7 +21,9 @@ class Level:
 #TODO: completly redo collisoon, its fucked and cant be fixxed
     def setup(self):
         for x in range (0,1):
-            enemyList.append(infantry(Vector2(random.randint(200,800),SCREEN_HEIGHT-118)))
+            enemyList.append(infantry(Vector2(0,SCREEN_HEIGHT-118)))
+        for x in range (0,1):
+            enemyList.append(tank(Vector2(250,SCREEN_HEIGHT-148)))
 
         self.player = Player((640, 360), self.all_sprites)
 
@@ -101,7 +103,7 @@ class CameraGroup(pygame.sprite.Group):
                         offset_rect.midbottom -= self.offset
                         self.display_surface.blit(sprite.image, offset_rect)
                         for e in enemyList:
-                            self.display_surface.blit(e.sprite, e.pos-self.offset)
+                            e.draw(self.offset)
                         for a in attacklist:
                             if a.rotated == False:
                                 self.image = pygame.transform.rotate(a.sprite, a.angle-180)

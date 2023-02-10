@@ -15,6 +15,7 @@ class Game:
         self.level = Level()
         self.state = 'running'
         self.setup = Menu()
+        self.num = 0
 
     def run(self):
         while True:
@@ -24,15 +25,17 @@ class Game:
                     sys.exit()
             dt = self.clock.tick(60) * (GAME_SPEED_MODIFIER/300)
             self.level.run(dt)
-            pygame.display.update()
             for enemy in enemyList:
                 enemy.update(self.level.player.pos)
             for attack in attacklist:
                 attack.update()
-                if attack.playerMissile == False and attack.lifetime >100:
+                if attack.playerMissile == False and attack.lifetime >50:
                     attack.delete = True
                 if attack.delete == True:
                     attacklist.remove(attack)
+            self.num += 1
+            if self.num % 2 == 1:
+                pygame.display.update()
 
     def menu(self):
         while True:

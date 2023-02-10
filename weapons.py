@@ -35,4 +35,19 @@ class Missile(Weapon):
         self.delete = True
         #add explosion here
 
+class Bullet(Weapon):
+    def __init__(self, sourcePos, speed,playerMissile,target):
+        super().__init__(sourcePos,speed,playerMissile,target,pygame.image.load("./graphics/weapons/bullet.png").convert_alpha())
+        self.vel = (self.target - self.sourcePos).normalize()
+        self.angle = (self.target - self.sourcePos).angle_to((1, 0))
+        self.hitbox =  pygame.image.load("./graphics/weapons/bullet.png").get_rect()
+        self.damage = 50
+
+    def update(self):
+        self.pos += self.vel * self.speed 
+        self.lifetime += 1
+    def kill(self):
+        self.delete = True
+        #add explosion here
+
 attacklist: list[Weapon] = []
