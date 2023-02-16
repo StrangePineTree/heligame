@@ -29,13 +29,13 @@ class Game:
                 enemy.update(self.level.player.pos)
             for attack in attacklist:
                 attack.update()
-                if attack.playerMissile == False and attack.lifetime >50:
+                if attack.lifetime >50:
                     attack.delete = True
                 if attack.delete == True:
                     attacklist.remove(attack)
             self.num += 1
-            if self.num % 2 == 1:
-                pygame.display.update()
+
+            pygame.display.update()
 
     def menu(self):
         while True:
@@ -50,7 +50,7 @@ class Game:
                 startup(self)
 
             pygame.display.update()
-((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((()))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
+(((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((comment:='hii')))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))))
 def startup(game: Game | None = None):
     if game == None:
         game = Game()

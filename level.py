@@ -24,6 +24,8 @@ class Level:
             enemyList.append(infantry(Vector2(0,SCREEN_HEIGHT-118)))
         for x in range (0,1):
             enemyList.append(tank(Vector2(250,SCREEN_HEIGHT-148)))
+        for x in range (0,1):
+            enemyList.append(maus(Vector2(600,SCREEN_HEIGHT-178)))
 
         self.player = Player((640, 360), self.all_sprites)
 

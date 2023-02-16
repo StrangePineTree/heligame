@@ -30,6 +30,8 @@ class Player(pygame.sprite.Sprite):
         self.thrust = 0
         self.missileCD = 0
         self.hp = 1000
+        self.flares = 100
+        self.flare = False
 
         self.scroll:Vector2 = Vector2(0,0)
         self.scrollParralax:Vector2 = Vector2(0,0)
@@ -37,7 +39,7 @@ class Player(pygame.sprite.Sprite):
         self.display_surface = pygame.display.get_surface()
 
         self.helitype = HELITYPE
-        self.ඞ = "sus"
+        self.ඞ = SUS
 
     def input(self):
         keys = pygame.key.get_pressed()

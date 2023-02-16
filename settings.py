@@ -1,6 +1,7 @@
 SCREEN_WIDTH = 1680
 SCREEN_HEIGHT = 920
 
+GET_SUS_LEVEL = 'sus'
 MAX_THRUST = 15 #default is 30
 GRAVITY = 1 # default is 1
 SPEED_MULTIPLIER = 1.0
@@ -10,6 +11,8 @@ OVERLAY = True
 RUNTIME = False
 ATTACK_COOLDOWN = 1.0
 ATTACK_SPEED = 1
+SUS = GET_SUS_LEVEL
+
 
 HELITYPE = "transport"
 #future heli types: UFO, attack, scout/basic, transport
