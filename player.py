@@ -17,7 +17,7 @@ class Player(pygame.sprite.Sprite):
         self.frame_index = 0
 
         self.image = self.animations[self.status]
-        self.z = LAYERS['main']
+        self.z = LAYERS['player']
 
         self.image = pygame.Surface((32,64))
         self.image.fill('green')
@@ -39,7 +39,7 @@ class Player(pygame.sprite.Sprite):
         self.display_surface = pygame.display.get_surface()
 
         self.helitype = HELITYPE
-        self.ඞ = SUS
+        self.ඞ = 'sus'
 
     def input(self):
         keys = pygame.key.get_pressed()
@@ -122,7 +122,7 @@ class Player(pygame.sprite.Sprite):
         if self.frame_index >= len(self.animations[self.status]):
             self.frame_index = 0
         self.image = self.animations[self.status][int(self.frame_index)]
-        self.z = LAYERS['main']
+        self.z = LAYERS['player']
 
         center = self.image.get_rect().center
         self.image = pygame.transform.rotate(self.image, self.rotation)

@@ -100,12 +100,12 @@ class CameraGroup(pygame.sprite.Group):
                         if abs(player.scrollParralax.x) > (sprite.image.get_width()):
                             player.scrollParralax.x = 0
 
-                    elif layer != 8:
+                    elif layer == 6:
+                        for e in enemyList:
+                            e.draw(self.offset)
                         offset_rect = sprite.rect.copy()
                         offset_rect.midbottom -= self.offset
                         self.display_surface.blit(sprite.image, offset_rect)
-                        for e in enemyList:
-                            e.draw(self.offset)
                         for a in attacklist:
                             if a.rotated == False:
                                 self.image = pygame.transform.rotate(a.sprite, a.angle-180)

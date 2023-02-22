@@ -1,17 +1,15 @@
-SCREEN_WIDTH = 1680
-SCREEN_HEIGHT = 920
+SCREEN_WIDTH = 1280
+SCREEN_HEIGHT = 720
 
-GET_SUS_LEVEL = 'sus'
 MAX_THRUST = 15 #default is 30
 GRAVITY = 1 # default is 1
 SPEED_MULTIPLIER = 1.0
-GAME_SPEED_MODIFIER = 1
+GAME_SPEED_MODIFIER = 1.2
 TURN_SPEED = 1.0
 OVERLAY = True
 RUNTIME = False
 ATTACK_COOLDOWN = 1.0
 ATTACK_SPEED = 1
-SUS = GET_SUS_LEVEL
 
 
 HELITYPE = "transport"
@@ -27,8 +25,8 @@ LAYERS = {
     'sky':1,
     'background':2,
     'ground': 3,
-    'trees':5,
-    'mountains':6,
-    'main':7,
-    'menu':8
+    'trees':4,
+    'enemies':5,
+    'player':6,
+    'attacks':7
 }
