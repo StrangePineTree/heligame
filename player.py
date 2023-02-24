@@ -10,8 +10,13 @@ from level import *
 class Player(pygame.sprite.Sprite):
     def __init__(self, pos, group):
         super().__init__(group)
-
+        self.helitype = HELITYPE
         self.import_assests()
+
+        self.handle = pygame.image.load("./graphics/GUI/throttle handle.png").convert_alpha()
+        self.needle = pygame.image.load("./graphics/GUI/speedometer needle.png").convert_alpha()
+        self.numbers = pygame.image.load("./graphics/GUI/speedometer numbers.png").convert_alpha() #ToDo: draw these
+        self.speedometer = pygame.image.load("./graphics/GUI/speedometer.png").convert_alpha()
 
         self.status = 'right'
         self.frame_index = 0
@@ -32,13 +37,13 @@ class Player(pygame.sprite.Sprite):
         self.hp = 1000
         self.flares = 100
         self.flare = False
+        self.fall = True
 
         self.scroll:Vector2 = Vector2(0,0)
         self.scrollParralax:Vector2 = Vector2(0,0)
 
         self.display_surface = pygame.display.get_surface()
 
-        self.helitype = HELITYPE
         self.ඞ = 'sus'
 
     def input(self):
@@ -74,13 +79,14 @@ class Player(pygame.sprite.Sprite):
         self.speed.y -= math.cos(math.radians(self.rotation)) * SPEED_MULTIPLIER * self.thrust * dt / 4
         self.speed.x -= math.sin(math.radians(self.rotation)) * SPEED_MULTIPLIER * self.thrust * dt / 4
         self.speed *=0.99
-        self.speed.y+=dt * GRAVITY
+        if self.fall == True:
+            self.speed.y+=dt * GRAVITY
         self.scrollParralax -= self.speed / PARALLAX_FACTOR*.2
+        self.scroll -= self.speed
         if self.pos.y > SCREEN_HEIGHT-100 and self.speed.y > 0:
             pass
         else:
             self.pos += self.speed
-        self.scroll -= self.speed
         if self.speed.x > 0: #todo: change this to use self.rotation
             self.status = 'right'
         if self.speed.x < 0:
@@ -93,7 +99,9 @@ class Player(pygame.sprite.Sprite):
     def crash(self,speed:Vector2, rotation):
         self.speed.x /= 1.1
         self.speed.y *= .7
-        self.speed.y = -abs(self.speed.y)
+        if self.speed.y > 0:
+            self.speed.y = -abs(self.speed.y)
+        
     #maybe make this completly scripted, basicly put the player in a cut scene
 
 
@@ -106,15 +114,24 @@ class Player(pygame.sprite.Sprite):
                 attacklist.remove(attack)
                 print('hit')
 
-        if self.pos.y > SCREEN_HEIGHT-100:
+        if self.rect.bottom-20 > SCREEN_HEIGHT-100:
             self.crash(self.speed, self.rotation)
+            self.fall = False
+            if self.speed.y < .5:
+                self.speed.y = 0
+        elif self.pos.y < SCREEN_HEIGHT-101:
+            self.fall = True
             #do heavy damage to the player based on speed here
             #make a better 'crash', make player spin and flip around before dying (they should have flown better)
 
     def import_assests(self):
+        full_path = ''
         self.animations: dict[str, list[pygame.Surface]] = {'left':[], 'right':[]}
         for animation in self.animations.keys():
-            full_path = './graphics/heli/' + animation
+            if self.helitype == 'transport':
+                full_path = './graphics/heli/transport/' + animation
+            else:
+                full_path = './graphics/heli/bad heli/' + animation
             self.animations[animation]=(((import_folder((((full_path)))))))
     
     def animate(self,dt):
@@ -131,18 +148,14 @@ class Player(pygame.sprite.Sprite):
 
     def displayGUI(self):
         pygame.draw.rect(self.display_surface, (00,200,200),[SCREEN_WIDTH-60,SCREEN_HEIGHT-260,50,250])#throttle
-        self.handle = pygame.image.load("./graphics/GUI/throttle handle.png").convert_alpha()
-        self.needle = pygame.image.load("./graphics/GUI/speedometer needle.png").convert_alpha()
-        self.numbers = pygame.image.load("./graphics/GUI/speedometer numbers.png").convert_alpha() #ToDo: draw these
-        self.speedometer = pygame.image.load("./graphics/GUI/speedometer.png").convert_alpha()
-        self.needle = pygame.transform.rotate(self.needle, 115-(self.speed.length() * 9))#IMPORTANT: this code rotates around center (1/3)
-        self.needleRect = self.needle.get_rect(center = self.needle.get_rect(center = (120,SCREEN_HEIGHT-120)).center)#IMPORTANT: this code rotates around center (2/3)
+        needle = pygame.transform.rotate(self.needle, 115-(self.speed.length() * 9))#IMPORTANT: this code rotates around center (1/3)
+        self.needleRect = needle.get_rect(center = self.needle.get_rect(center = (120,SCREEN_HEIGHT-120)).center)#IMPORTANT: this code rotates around center (2/3)
         pygame.draw.rect(self.display_surface, (100,100,200),[20,10,150,20])
         #update GUI elements here
         self.handleStartPos = SCREEN_HEIGHT/1.04 - (self.thrust * 15.5)
         self.display_surface.blit(self.handle,(SCREEN_WIDTH-60,self.handleStartPos))
         self.display_surface.blit(self.speedometer,(+20,SCREEN_HEIGHT-220))
-        self.display_surface.blit(self.needle,(self.needleRect))#todo: remove magic numbers #IMPORTANT: this code rotates around center (3/3)
+        self.display_surface.blit(needle,(self.needleRect))#todo: remove magic numbers #IMPORTANT: this code rotates around center (3/3)
         self.display_surface.blit(self.numbers,(20,SCREEN_HEIGHT-220))
     def update(self, dt):
         self.input()

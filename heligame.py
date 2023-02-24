@@ -58,8 +58,10 @@ def startup(game: Game | None = None):
         game.run()
     elif game.state == 'menu':
         game.menu()
-    if RUNTIME == True:
-        cProfile.run("game.run()", sort="time")
+
 
 if __name__ == '__main__':
-    startup()
+    if RUNTIME == True:
+        cProfile.run("startup()", sort="time")
+    else:
+        startup()

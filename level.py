@@ -27,7 +27,7 @@ class Level:
         for x in range (0,1):
             enemyList.append(maus(Vector2(600,SCREEN_HEIGHT-178)))
 
-        self.player = Player((640, 360), self.all_sprites)
+        self.player = Player((640, SCREEN_HEIGHT-130), self.all_sprites)
 
         GenericSprite(
             pos = (SCREEN_WIDTH/2,SCREEN_HEIGHT+100),
