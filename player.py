@@ -38,6 +38,11 @@ class Player(pygame.sprite.Sprite):
         self.flares = 100
         self.flare = False
         self.fall = True
+        self.mouseAngle = 0
+
+        if HELITYPE == 'transport':
+            self.gunright = pygame.image.load("./graphics/heli/transport/gun(left).png").convert_alpha()
+            self.gunleft = pygame.image.load("./graphics/heli/transport/gun(left).png").convert_alpha()
 
         self.scroll:Vector2 = Vector2(0,0)
         self.scrollParralax:Vector2 = Vector2(0,0)
@@ -50,7 +55,8 @@ class Player(pygame.sprite.Sprite):
         keys = pygame.key.get_pressed()
 
         offset:Vector2 = Vector2(self.pos.x - SCREEN_WIDTH / 2,self.pos.y - SCREEN_HEIGHT / 2)
-
+        self.mouseAngle = math.degrees(math.atan2(pygame.mouse.get_pos()[1]+offset.y-self.pos.y,pygame.mouse.get_pos()[0]+offset.x-self.pos.x))
+        print(self.mouseAngle)
         if pygame.mouse.get_pressed()[0] and self.helitype == 'transport':
             if self.missileCD <= 0:
                 attacklist.append(Bullet(self.pos,(75 * ATTACK_SPEED),True,pygame.mouse.get_pos()+offset))
@@ -104,7 +110,6 @@ class Player(pygame.sprite.Sprite):
         
     #maybe make this completly scripted, basicly put the player in a cut scene
 
-
     def collide(self,scroll):
         #rotate self.hitbox
         #use self.hitbox for missiles, attacks, ect
@@ -145,6 +150,10 @@ class Player(pygame.sprite.Sprite):
         self.image = pygame.transform.rotate(self.image, self.rotation)
         self.rect = self.image.get_rect()
         self.rect.center = self.pos
+
+
+        gun = self.gunright #make it = differnt thing based on angle
+        self.display_surface.blit(gun,(self.pos))
 
     def displayGUI(self):
         pygame.draw.rect(self.display_surface, (00,200,200),[SCREEN_WIDTH-60,SCREEN_HEIGHT-260,50,250])#throttle
