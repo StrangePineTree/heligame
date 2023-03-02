@@ -32,7 +32,7 @@ class Player(pygame.sprite.Sprite):
         self.pos = pygame.math.Vector2(self.rect.center)
         self.speed: Vector2 = Vector2(0, 0)
         self.rotation = 0
-        self.thrust = 0
+        self.thrust = 5
         self.missileCD = 0
         self.hp = 1000
         self.flares = 100
@@ -42,7 +42,8 @@ class Player(pygame.sprite.Sprite):
 
         if HELITYPE == 'transport':
             self.gunright = pygame.image.load("./graphics/heli/transport/gun(left).png").convert_alpha()
-            self.gunleft = pygame.image.load("./graphics/heli/transport/gun(left).png").convert_alpha()
+            self.gunleft = pygame.image.load("./graphics/heli/transport/gun(right).png").convert_alpha()
+            self.gun = self.gunright
 
         self.scroll:Vector2 = Vector2(0,0)
         self.scrollParralax:Vector2 = Vector2(0,0)
@@ -152,20 +153,28 @@ class Player(pygame.sprite.Sprite):
         self.rect.center = self.pos
 
 
-        gun = self.gunright #make it = differnt thing based on angle
-        self.display_surface.blit(gun,(self.pos))
-
     def displayGUI(self):
         pygame.draw.rect(self.display_surface, (00,200,200),[SCREEN_WIDTH-60,SCREEN_HEIGHT-260,50,250])#throttle
         needle = pygame.transform.rotate(self.needle, 115-(self.speed.length() * 9))#IMPORTANT: this code rotates around center (1/3)
         self.needleRect = needle.get_rect(center = self.needle.get_rect(center = (120,SCREEN_HEIGHT-120)).center)#IMPORTANT: this code rotates around center (2/3)
         pygame.draw.rect(self.display_surface, (100,100,200),[20,10,150,20])
-        #update GUI elements here
+
         self.handleStartPos = SCREEN_HEIGHT/1.04 - (self.thrust * 15.5)
         self.display_surface.blit(self.handle,(SCREEN_WIDTH-60,self.handleStartPos))
         self.display_surface.blit(self.speedometer,(+20,SCREEN_HEIGHT-220))
         self.display_surface.blit(needle,(self.needleRect))#todo: remove magic numbers #IMPORTANT: this code rotates around center (3/3)
         self.display_surface.blit(self.numbers,(20,SCREEN_HEIGHT-220))
+
+        if HELITYPE == "transport":
+            if abs(self.mouseAngle) > 90:
+                gun = self.gunleft
+            else:
+                gun = self.gunright
+            gun = pygame.transform.rotate(gun,-self.mouseAngle)
+            self.gunrect = gun.get_rect(center = self.gun.get_rect(center = (640, SCREEN_HEIGHT-130)).center)
+            self.gunrect.center = self.rect.center
+            self.display_surface.blit(gun, self.gunrect)
+
     def update(self, dt):
         self.input()
         self.collide(self.scroll)

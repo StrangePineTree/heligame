@@ -39,7 +39,7 @@ class Bullet(Weapon): #change how information is loaded so the bug is fixxed
     def __init__(self, sourcePos, speed,playerMissile,target):
         super().__init__(sourcePos,speed,playerMissile,target,pygame.image.load("./graphics/weapons/bullet.png").convert_alpha())
         self.vel = (self.target - self.sourcePos).normalize()
-        self.angle = (self.target - self.sourcePos).angle_to((1, 0))
+        self.angle = (self.target - self.sourcePos).angle_to((1, 0)) + 90
         self.hitbox =  pygame.image.load("./graphics/weapons/bullet.png").get_rect() #replace this with a yellow rect
         self.damage = 50
 
