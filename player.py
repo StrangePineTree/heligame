@@ -57,10 +57,10 @@ class Player(pygame.sprite.Sprite):
 
         offset:Vector2 = Vector2(self.pos.x - SCREEN_WIDTH / 2,self.pos.y - SCREEN_HEIGHT / 2)
         self.mouseAngle = math.degrees(math.atan2(pygame.mouse.get_pos()[1]+offset.y-self.pos.y,pygame.mouse.get_pos()[0]+offset.x-self.pos.x))
-        print(self.mouseAngle)
+
         if pygame.mouse.get_pressed()[0] and self.helitype == 'transport':
             if self.missileCD <= 0:
-                attacklist.append(Bullet(self.pos,(75 * ATTACK_SPEED),True,pygame.mouse.get_pos()+offset))
+                attacklist.append(Bullet((self.pos+(22,10)),(75 * ATTACK_SPEED),True,pygame.mouse.get_pos()+offset))
                 self.missileCD = ATTACK_COOLDOWN * 10
 
         if pygame.mouse.get_pressed()[0] and self.helitype == 'basic':
@@ -164,16 +164,6 @@ class Player(pygame.sprite.Sprite):
         self.display_surface.blit(self.speedometer,(+20,SCREEN_HEIGHT-220))
         self.display_surface.blit(needle,(self.needleRect))#todo: remove magic numbers #IMPORTANT: this code rotates around center (3/3)
         self.display_surface.blit(self.numbers,(20,SCREEN_HEIGHT-220))
-
-        if HELITYPE == "transport":
-            if abs(self.mouseAngle) > 90:
-                gun = self.gunleft
-            else:
-                gun = self.gunright
-            gun = pygame.transform.rotate(gun,-self.mouseAngle)
-            self.gunrect = gun.get_rect(center = self.gun.get_rect(center = (640, SCREEN_HEIGHT-130)).center)
-            self.gunrect.center = self.rect.center
-            self.display_surface.blit(gun, self.gunrect)
 
     def update(self, dt):
         self.input()

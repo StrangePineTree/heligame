@@ -106,6 +106,16 @@ class CameraGroup(pygame.sprite.Group):
                         offset_rect = sprite.rect.copy()
                         offset_rect.midbottom -= self.offset
                         self.display_surface.blit(sprite.image, offset_rect)
+
+                        if HELITYPE == "transport":
+                            if abs(player.mouseAngle) > 90:
+                                gun = player.gunleft
+                            else:
+                                gun = player.gunright
+                            gun = pygame.transform.rotate(gun,-player.mouseAngle)
+                            self.gunrect = gun.get_rect(center = gun.get_rect(center = (SCREEN_WIDTH/2+22, SCREEN_HEIGHT/2+10)).center)
+                            self.display_surface.blit(gun, self.gunrect)
+
                         for a in attacklist:
                             if a.rotated == False:
                                 self.image = pygame.transform.rotate(a.sprite, a.angle-180)
