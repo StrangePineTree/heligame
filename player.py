@@ -39,6 +39,7 @@ class Player(pygame.sprite.Sprite):
         self.flare = False
         self.fall = True
         self.mouseAngle = 0
+        self.gunOffset:Vector2 = Vector2(0,0)
 
         if HELITYPE == 'transport':
             self.gunright = pygame.image.load("./graphics/heli/transport/gun(left).png").convert_alpha()
@@ -54,13 +55,21 @@ class Player(pygame.sprite.Sprite):
 
     def input(self):
         keys = pygame.key.get_pressed()
+        offset:Vector2 = Vector2(self.pos.x - SCREEN_WIDTH / 2,self.pos.y - SCREEN_HEIGHT / 2) 
+        self.mouseAngle = math.degrees(math.atan2(pygame.mouse.get_pos()[1]+offset.y-self.gunOffset.y-self.pos.y,pygame.mouse.get_pos()[0]+offset.x-self.gunOffset.x-self.pos.x))
 
-        offset:Vector2 = Vector2(self.pos.x - SCREEN_WIDTH / 2,self.pos.y - SCREEN_HEIGHT / 2)
-        self.mouseAngle = math.degrees(math.atan2(pygame.mouse.get_pos()[1]+offset.y-self.pos.y,pygame.mouse.get_pos()[0]+offset.x-self.pos.x))
+        #change gun/bullet offset
+        if HELITYPE == 'transport':
+            self.gunOffset = Vector2(22,10)
+            self.gunOffset.rotate_ip(-self.rotation if self.speed.x > 0 else self.rotation) #this is broken and messes up at 115 degree/2 radians
+            if self.speed.x < 0 and self.gunOffset.x > 0:
+                self.gunOffset.x *= -1
+            if self.speed.x > 0 and self.gunOffset.x < 0:
+                self.gunOffset.x *= -1
 
         if pygame.mouse.get_pressed()[0] and self.helitype == 'transport':
             if self.missileCD <= 0:
-                attacklist.append(Bullet((self.pos+(22,10)),(75 * ATTACK_SPEED),True,pygame.mouse.get_pos()+offset))
+                attacklist.append(Bullet((self.pos+self.gunOffset),(75 * ATTACK_SPEED),True,pygame.mouse.get_pos()+offset))
                 self.missileCD = ATTACK_COOLDOWN * 10
 
         if pygame.mouse.get_pressed()[0] and self.helitype == 'basic':

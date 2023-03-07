@@ -113,7 +113,7 @@ class CameraGroup(pygame.sprite.Group):
                             else:
                                 gun = player.gunright
                             gun = pygame.transform.rotate(gun,-player.mouseAngle)
-                            self.gunrect = gun.get_rect(center = gun.get_rect(center = (SCREEN_WIDTH/2+22, SCREEN_HEIGHT/2+10)).center)
+                            self.gunrect = gun.get_rect(center = gun.get_rect(center = (SCREEN_WIDTH/2 + player.gunOffset.x , SCREEN_HEIGHT/2+player.gunOffset.y)).center)
                             self.display_surface.blit(gun, self.gunrect)
 
                         for a in attacklist:
