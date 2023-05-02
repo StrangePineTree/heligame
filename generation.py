@@ -10,18 +10,8 @@ enemyList: list[Enemy] = []
 
 
 def GenerateObstacle(level):
-    locationList = [
-        "./graphics/terrian features/tree1.png",
-        "./graphics/terrian features/tree2.png",
-        "./graphics/terrian features/tree3.png",
-        "./graphics/terrian features/tree4.png",
-        "./graphics/terrian features/tree5.png",
-        "./graphics/terrian features/tree6.png",
-        "./graphics/terrian features/tree7.png",
-        "./graphics/terrian features/rock1.png",
-        "./graphics/terrian features/rock2.png",
-        "./graphics/terrian features/rock3.png"
-    ]
+    locationList = [f"./graphics/terrain features/tree{n + 1}.png" for n in range(7)]
+    locationList.extend([f"./graphics/terrain features/rock{n + 1}.png" for n in range(3)])
     
     image = pygame.image.load(random.choices(locationList, [0.1, 0.5, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05, 0.05])[0]).convert_alpha()
 
